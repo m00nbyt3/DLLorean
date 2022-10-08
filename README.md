@@ -2,7 +2,7 @@
 A tool for automatizing the DLL Proxying. Just specify the original DLL and your payload, and you are done.
 
 ## How-to-use
-1. Compile it using GCC: 
+1. Compile it using GCC (or use precompiled binary "DLLorean"): 
 ```
 gcc main.c
 ```
