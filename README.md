@@ -1,6 +1,10 @@
 # DLLorean
 A tool for automatizing the DLL Proxying. Just specify the original DLL and your payload, and you are done.
 
+## Requirements
+- Python3: sudo apt install pyhton3
+- gcc-mingw-w64-i686: sudo apt install gcc-mingw-w64-i686
+
 ## How-to-use
 1. Compile it using GCC (or use precompiled binary "DLLorean"): 
 ```
