@@ -8,22 +8,24 @@ void	get_payload(void);
 char	**check_all(char **argv);
 char 	*change_dll_name(char *dllname);
 void	check_dirs(void);
+void	show_help(char *pname);
 
 int	main(int argc, char **argv)
 {
 	if (argc < 2)
 	{
-		printf("ERROR: No arguments given...\n");
+		printf("ERROR: No arguments given\n");
+		show_help(argv[0]);
 		return(0);
 	}
 	if (argc > 5)
 	{
-		printf("ERROR: Too many arguments...\n");
+		printf("ERROR: Too many arguments\n");
 		return(0);
 	}
 	if (argv[1][0] != '-')
 	{
-		printf("ERROR: Invalid option...\n");
+		printf("ERROR: Invalid option\n");
 		return(0);
 	}
 	mode_detection(argv);
@@ -35,7 +37,9 @@ void	mode_detection(char **argv)
 	char	**save;
 	char	buf[10000];
 
-	if(!strcmp(argv[1], "--get-payload") || !strcmp(argv[1], "-gp"))
+	if (!strcmp(argv[1], "--help") || !strcmp(argv[1], "-h"))
+		show_help(argv[0]); 
+	else if (!strcmp(argv[1], "--get-payload") || !strcmp(argv[1], "-gp"))
 		get_payload();
 	else
 	{
@@ -55,8 +59,7 @@ void	mode_detection(char **argv)
 }
 
 void	get_payload(void)
-{
-	//char *tofile = "void payload(void)\n	{\n		//Write here your Payload...\n		}\n\n\n\nBOOL WINAPI\nDllMain (HANDLE hDll, DWORD dwReason, LPVOID lpReserved)\n{\n		switch (dwReason)\n{\n		case DLL_PROCESS_ATTACH:\n		payload();\n		break;\n	}\n		return TRUE;\n}";
+{	
 	system("echo \"void payload(void)\n{\n	//Write here your Payload...\n}\n\n\n\nBOOL WINAPI\nDllMain (HANDLE hDll, DWORD dwReason, LPVOID lpReserved)\n{\n	switch (dwReason)\n	{\n		case DLL_PROCESS_ATTACH:\n			payload();\n			break;\n	}\n	return TRUE;\n}\" > payload.c");
 }
 
@@ -80,7 +83,7 @@ char	**check_all(char **argv)
 		{
 			if (argv[i+1] && access(argv[i+1], F_OK))
 			{
-				printf("ERROR: DLL file does not exits...\n");
+				printf("ERROR: DLL file does not exits\n");
 				exist[0]++;
 			}
 			else
@@ -91,7 +94,7 @@ char	**check_all(char **argv)
 		{
 			if (argv[i+1] && access(argv[i+1], F_OK))
 			{
-				printf("ERROR: Payload file does not exits...\n");
+				printf("ERROR: Payload file does not exits\n");
 				exist[1]++;
 			}
 			else
@@ -100,14 +103,14 @@ char	**check_all(char **argv)
 		}
 		else if (argv[i])
 		{
-			printf("ERROR: Invalid argument: %s...\n", argv[i]);
+			printf("ERROR: Invalid argument: %s\n", argv[i]);
 			error++;
 		}
 	}
 	if (specified[0] != 1 && !exist[0])
-		printf("ERROR: DLL file not specified...\n");
+		printf("ERROR: DLL file not specified\n");
 	if (specified[1] != 1 && !exist[1])
-		printf("ERROR: Payload file not specified...\n");
+		printf("ERROR: Payload file not specified\n");
 	if (error || specified[0] != 1 || specified[1] != 1 || exist[0] || exist[1])
 	{
 		free(save);
@@ -137,7 +140,7 @@ void	check_dirs(void)
 	{
 		if (access("defs/", R_OK) && access("defs/", W_OK))
 		{
-			printf("Dont have permission to r/w onto defs/ folder...");
+			printf("Dont have permission to r/w onto defs/ folder");
 			exit(1);
 		}
 
@@ -150,11 +153,25 @@ void	check_dirs(void)
 	{
 		if (access("generated/", R_OK) && access("generated/", W_OK))
 		{
-			printf("Dont have permission to r/w onto generated/ folder...");
+			printf("Dont have permission to r/w onto generated/ folder");
 			exit(1);
 		}
 
 	}
 	else
 		system("mkdir generated/");
+}
+
+void	show_help(char *pname)
+{
+	printf("\nUsage: %s [options ...]\n\n", pname);
+	printf("SUPPORT INSTRUCTIONS:\n");
+	printf("-h,   --help				Shows this help text\n");
+	printf("-gp,  --get-payload			Generates a .c file containing basic payload info\n\n");
+	printf("PROXYING INSTRUCTIONS: (all of them must be passed)\n");
+	printf("-d <DLL file name (.dll)>		Specifies the original DLL file name\n");
+	printf("-p <Payload file name (.c)> 		Specifies the payload file name\n\n");
+	printf("EXAMPLE OF USAGE:\n");
+	printf("%s -d my_dll_file.dll -p my_payload_file.c\n\n", pname);
+	printf("ATTENTION:\nIts important that the DLL file is located IN THE SAME DIRECTORY as the binary (\"%s\" file)\n\n", pname + 2);
 }
